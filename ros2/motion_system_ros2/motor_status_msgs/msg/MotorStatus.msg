@@ -1,6 +1,7 @@
 uint8[] number_of_target_interfaces
 std_msgs/Int8MultiArray[] target_interface_id
 uint8[] controller_index
+string[] driver_name
 uint16[] controlword
 uint16[] statusword
 uint16[] errorcode
@@ -8,3 +9,8 @@ uint16[] station_alias_register
 float64[] position
 float64[] velocity
 float64[] torque
+float64[] current
+int32[] position_raw
+int32[] velocity_raw
+int16[] torque_raw
+int16[] current_raw

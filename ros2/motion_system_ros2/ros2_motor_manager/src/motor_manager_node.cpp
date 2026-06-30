@@ -124,6 +124,7 @@ void MotorManagerNode::timer_callback()
     MotorStatus msg;
     msg.number_of_target_interfaces.resize(n);
     msg.controller_index.resize(n);
+    msg.driver_name.resize(n);
     msg.controlword.resize(n);
     msg.statusword.resize(n);
     msg.errorcode.resize(n);
@@ -131,9 +132,15 @@ void MotorManagerNode::timer_callback()
     msg.position.resize(n);
     msg.velocity.resize(n);
     msg.torque.resize(n);
+    msg.current.resize(n);
+    msg.position_raw.resize(n);
+    msg.velocity_raw.resize(n);
+    msg.torque_raw.resize(n);
+    msg.current_raw.resize(n);
 
     for (uint8_t i = 0; i < n; i++) {
         msg.controller_index[i] = status[i].controller_index;
+        msg.driver_name[i] = status[i].driver_name;
         msg.controlword[i] = status[i].controlword;
         msg.statusword[i] = status[i].statusword;
         msg.errorcode[i] = status[i].errorcode;
@@ -141,6 +148,11 @@ void MotorManagerNode::timer_callback()
         msg.position[i] = status[i].position;
         msg.velocity[i] = status[i].velocity;
         msg.torque[i] = status[i].torque;
+        msg.current[i] = status[i].current;
+        msg.position_raw[i] = status[i].position_raw;
+        msg.velocity_raw[i] = status[i].velocity_raw;
+        msg.torque_raw[i] = status[i].torque_raw;
+        msg.current_raw[i] = status[i].current_raw;
     }
 
     motor_status_publisher_->publish(msg);

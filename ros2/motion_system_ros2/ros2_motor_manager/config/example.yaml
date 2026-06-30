@@ -93,6 +93,7 @@ drivers:
     pulse_per_revolution: 8388608
     rated_torque: 0.16
     unit_torque: 0.1
+    rated_current: 1.1
     lower: -1.0
     upper: 1.0
     speed: 2000
