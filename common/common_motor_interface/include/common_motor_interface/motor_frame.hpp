@@ -15,6 +15,7 @@ struct motor_frame_t {
     uint16_t controlword{};
     uint16_t statusword{};
     uint16_t errorcode{};
+    uint16_t station_alias_register{};
     double position{};
     double velocity{};
     double torque{};

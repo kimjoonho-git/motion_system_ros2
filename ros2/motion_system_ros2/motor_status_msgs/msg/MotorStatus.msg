@@ -4,6 +4,7 @@ uint8[] controller_index
 uint16[] controlword
 uint16[] statusword
 uint16[] errorcode
+uint16[] station_alias_register
 float64[] position
 float64[] velocity
 float64[] torque

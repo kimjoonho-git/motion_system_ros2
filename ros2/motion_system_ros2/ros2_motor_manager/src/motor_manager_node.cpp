@@ -127,6 +127,7 @@ void MotorManagerNode::timer_callback()
     msg.controlword.resize(n);
     msg.statusword.resize(n);
     msg.errorcode.resize(n);
+    msg.station_alias_register.resize(n);
     msg.position.resize(n);
     msg.velocity.resize(n);
     msg.torque.resize(n);
@@ -136,6 +137,7 @@ void MotorManagerNode::timer_callback()
         msg.controlword[i] = status[i].controlword;
         msg.statusword[i] = status[i].statusword;
         msg.errorcode[i] = status[i].errorcode;
+        msg.station_alias_register[i] = status[i].station_alias_register;
         msg.position[i] = status[i].position;
         msg.velocity[i] = status[i].velocity;
         msg.torque[i] = status[i].torque;
