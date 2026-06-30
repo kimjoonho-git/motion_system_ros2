@@ -1,6 +1,6 @@
 [submodule "lib/motor_manager"]
     path = lib/motor_manager
-    url = https://github.com/SeonilChoi/motor_manager.git
+    url = https://github.com/kimjoonho-git/motor_manager.git
 
 [submodule "lib/robot_manager"]
     path = lib/robot_manager
