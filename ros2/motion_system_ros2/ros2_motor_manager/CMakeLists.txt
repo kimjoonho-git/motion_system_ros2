@@ -9,6 +9,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(driver_interface REQUIRED)
 find_package(motor_status_msgs REQUIRED)
 find_package(motor_manager REQUIRED)
 find_package(common_motor_interface REQUIRED)
@@ -22,6 +23,7 @@ target_include_directories(motor_manager_node PUBLIC
 ament_target_dependencies(motor_manager_node
   rclcpp
   std_msgs
+  driver_interface
   motor_status_msgs
 )
 target_link_libraries(motor_manager_node

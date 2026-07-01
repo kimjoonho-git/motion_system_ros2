@@ -12,6 +12,7 @@
   <depend>rclcpp</depend>
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
+  <depend>driver_interface</depend>
   <depend>sensor_msgs</depend>
   <depend>motor_status_msgs</depend>
   <depend>motor_manager</depend>

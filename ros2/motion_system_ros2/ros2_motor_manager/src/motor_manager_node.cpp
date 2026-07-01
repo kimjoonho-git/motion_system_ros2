@@ -28,6 +28,10 @@ MotorManagerNode::MotorManagerNode(const rclcpp::NodeOptions& options)
         "motor_status", rclcpp::QoS(1).best_effort()
     );
 
+    ethercat_status_publisher_ = this->create_publisher<EthercatStatus>(
+        "ethercat_status", rclcpp::QoS(1).best_effort()
+    );
+
     motor_status_timer_ = this->create_wall_timer(
         std::chrono::milliseconds(1),
         [this]() {
@@ -35,14 +39,27 @@ MotorManagerNode::MotorManagerNode(const rclcpp::NodeOptions& options)
         }
     );
 
+    ethercat_status_timer_ = this->create_wall_timer(
+        std::chrono::milliseconds(100),
+        [this]() {
+            ethercat_status_timer_callback();
+        }
+    );
+
     config_file_ = this->declare_parameter<std::string>("config_file", "");
+    auto_enable_ = this->declare_parameter<bool>("auto_enable", false);
     if (config_file_.empty()) {
         throw std::runtime_error(
             "Parameter 'config_file' is empty. Use e.g. "
             "`ros2 launch ros2_motor_manager motor_manager.launch.py`.");
     }
 
-    motor_manager_ = std::make_unique<motor_manager::MotorManager>(config_file_);
+    RCLCPP_INFO(
+        get_logger(),
+        "motor_manager_node starting with auto_enable=%s",
+        auto_enable_ ? "true" : "false");
+
+    motor_manager_ = std::make_unique<motor_manager::MotorManager>(config_file_, auto_enable_);
 
     manager_run_thread_ = std::thread([this]() {
         try {
@@ -156,6 +173,49 @@ void MotorManagerNode::timer_callback()
     }
 
     motor_status_publisher_->publish(msg);
+}
+
+void MotorManagerNode::ethercat_status_timer_callback()
+{
+    if (!motor_manager_) {
+        return;
+    }
+
+    const auto statuses = motor_manager_->ethercat_statuses();
+    if (statuses.empty()) {
+        return;
+    }
+
+    EthercatStatus msg;
+    msg.header.stamp = this->now();
+    msg.header.frame_id = "ethercat";
+    msg.master_active = true;
+    msg.link_up = true;
+    msg.domain_wc_state = 2;
+    msg.phase = statuses.size() == 1 ? statuses.front().phase : "multi";
+
+    for (const auto& status : statuses) {
+        msg.master_active = msg.master_active && status.master_active;
+        msg.link_up = msg.link_up && status.link_up;
+        msg.slaves_responding += status.slaves_responding;
+        msg.al_states |= status.al_states;
+        msg.domain_working_counter += status.domain_working_counter;
+        msg.domain_wc_state = std::min(msg.domain_wc_state, status.domain_wc_state);
+    }
+
+    if (!msg.master_active) {
+        msg.state_text = "EtherCAT master inactive";
+    } else if (!msg.link_up) {
+        msg.state_text = "EtherCAT link down";
+    } else if (msg.slaves_responding == 0) {
+        msg.state_text = "No responding EtherCAT slaves";
+    } else if (statuses.size() == 1) {
+        msg.state_text = statuses.front().state_text;
+    } else {
+        msg.state_text = "EtherCAT multi-master status";
+    }
+
+    ethercat_status_publisher_->publish(msg);
 }
 
 int main(int argc, char* argv[])
